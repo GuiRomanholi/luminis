@@ -129,5 +129,5 @@ public class UsuarioDao {
             throw new RuntimeException(e);
         }
     }
-    }
+    
 }
