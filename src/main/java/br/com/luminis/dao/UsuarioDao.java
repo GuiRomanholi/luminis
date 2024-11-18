@@ -82,7 +82,7 @@ public class UsuarioDao {
             conexao = ConnectionFactory.obterConexao();
             conexao.setAutoCommit(false);
 
-            String sqlDeleteUsuario = "DELETE FROM cliente WHERE id_usu = ?";
+            String sqlDeleteUsuario = "DELETE FROM usuario WHERE id_usu = ?";
             comandoSql = conexao.prepareStatement(sqlDeleteUsuario);
             comandoSql.setString(1, id);
             comandoSql.executeUpdate();
