@@ -1,50 +1,41 @@
 package br.com.luminis.service;
-
 import br.com.luminis.dao.UsuarioDao;
 import br.com.luminis.dto.UsuarioRequestDto;
 import br.com.luminis.models.Usuario;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 public class UsuarioService {
-
     private UsuarioDao usuarioDao = new UsuarioDao();
-
-    public void cadastrar(UsuarioRequestDto usuarioDto) {
-        Usuario usuario = usuarioDto.convertToEntity();
+    public void cadastrar(UsuarioRequestDto usuarioDto){
+        Usuario usuario = usuarioDto.convert(usuarioDto);
         usuarioDao.cadastrarUsuario(usuario);
     }
-
     public List<UsuarioRequestDto> listar(){
         List<Usuario> produtos = usuarioDao.buscarTodosUsuarios();
         return produtos.stream()
                 .map(usuario -> {
                     UsuarioRequestDto usuarioDto = new UsuarioRequestDto();
-                    usuarioDto.setId_usu(usuario.getId_usu());
+                    usuarioDto.setCpf(usuario.getCpf());
                     usuarioDto.setNome(usuario.getNome());
                     usuarioDto.setSenha(usuario.getSenha());
                     usuarioDto.setEmail(usuario.getEmail());
                     return usuarioDto;
                 }).collect(Collectors.toList());
     }
-
-    public void deletar(int id){
-        usuarioDao.deletar(id);
+    public void deletar(String cpf){
+        usuarioDao.deletar(cpf);
     }
-
-    public UsuarioRequestDto buscarPorId(int id) {
-        Usuario usuario = usuarioDao.buscarPorId(id);
+    public UsuarioRequestDto buscarPorId(String cpf) {
+        Usuario usuario = usuarioDao.buscarPorId(cpf);
         UsuarioRequestDto usuarioRequestDto = new UsuarioRequestDto();
-        usuarioRequestDto.setId_usu(usuario.getId_usu());
+        usuarioRequestDto.setCpf(usuario.getCpf());
         usuarioRequestDto.setNome(usuario.getNome());
         usuarioRequestDto.setSenha(usuario.getSenha());
         usuarioRequestDto.setEmail(usuario.getEmail());
         return usuarioRequestDto;
     }
-
     public void atualizar(UsuarioRequestDto produtoDto) {
-        Usuario produto = produtoDto.convertToEntity();
+        Usuario produto = produtoDto.convert(produtoDto);
         usuarioDao.alterar(produto);
     }
 }

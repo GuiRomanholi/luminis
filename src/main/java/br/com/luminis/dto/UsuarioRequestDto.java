@@ -1,45 +1,34 @@
 package br.com.luminis.dto;
-
 import br.com.luminis.models.Usuario;
-
 public class UsuarioRequestDto {
-
-    private int id_usu; // Alterado para int
+    private String cpf;
     private String nome;
     private String senha;
     private String email;
-
-    // Método para converter de Usuario para UsuarioRequestDto
-    public static UsuarioRequestDto convertToDto(Usuario usuario) {
+    public UsuarioRequestDto convertToDto(Usuario usuario){
         UsuarioRequestDto usuarioRequestDto = new UsuarioRequestDto();
-
-        usuarioRequestDto.setId_usu(usuario.getId_usu());
+        usuarioRequestDto.setCpf(usuario.getCpf());
         usuarioRequestDto.setNome(usuario.getNome());
         usuarioRequestDto.setSenha(usuario.getSenha());
         usuarioRequestDto.setEmail(usuario.getEmail());
-
         return usuarioRequestDto;
     }
-
-    // Método para converter de UsuarioRequestDto para Usuario
-    public Usuario convertToEntity() {
+    public Usuario convert(UsuarioRequestDto usuarioRequestDto) {
         Usuario usuario = new Usuario();
-
-        usuario.setId_usu(this.getId_usu());
-        usuario.setNome(this.getNome());
-        usuario.setSenha(this.getSenha());
-        usuario.setEmail(this.getEmail());
-
+        usuario.setCpf(usuarioRequestDto.getCpf());
+        usuario.setNome(usuarioRequestDto.getNome());
+        usuario.setSenha(usuarioRequestDto.getSenha());
+        usuario.setEmail(usuarioRequestDto.getEmail());
         return usuario;
     }
+    //Getters e Setters
 
-    // Getters e Setters
-    public int getId_usu() {
-        return id_usu;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setId_usu(int id_usu) {
-        this.id_usu = id_usu;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getNome() {
@@ -64,15 +53,5 @@ public class UsuarioRequestDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "UsuarioRequestDto{" +
-                "id_usu=" + id_usu +
-                ", nome='" + nome + '\'' +
-                ", senha='" + senha + '\'' +
-                ", email='" + email + '\'' +
-                '}';
     }
 }

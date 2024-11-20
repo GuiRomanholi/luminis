@@ -1,18 +1,19 @@
 package br.com.luminis.models;
 
 public class Usuario {
-    private int id_usu;
+    private String cpf;
     private String nome;
     private String senha;
     private String email;
 
+    //getters e setters
 
-    public int getId_usu() {
-        return id_usu;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setId_usu(int id_usu) {
-        this.id_usu = id_usu;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getNome() {
