@@ -19,7 +19,7 @@ public class UsuarioResource {
     public Response cadastrar(UsuarioRequestDto usuario, @Context UriInfo uriInfo) {
         service.cadastrar(usuario);
         UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-        builder.path(usuario.getId_usu());
+        builder.path(String.valueOf(usuario.getId_usu()));
 
         return Response.created(builder.build())
                 .entity("{\"message\": \"Usuario cadastrado com sucesso\"}")
@@ -35,7 +35,7 @@ public class UsuarioResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response buscar(@PathParam("id") String id) {
+    public Response buscar(@PathParam("id") int id) {
         UsuarioRequestDto usuario = service.buscarPorId(id);
         if (usuario == null) {
             return Response.status(Response.Status.NOT_FOUND)
@@ -48,7 +48,7 @@ public class UsuarioResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response excluir(@PathParam("id") String id) {
+    public Response excluir(@PathParam("id") int id) {
         UsuarioRequestDto usuario = service.buscarPorId(id);
         if (usuario == null) {
             return Response.status(Response.Status.NOT_FOUND)
@@ -59,21 +59,18 @@ public class UsuarioResource {
         return Response.ok("{\"message\": \"Cliente excluído com sucesso\"}").build();
     }
 
+
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response alterar(UsuarioRequestDto produto, @PathParam("id") String id) {
-        if (produto.getId_usu() != null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"O id não deve ser incluído no corpo da requisição\"}")
-                    .build();
-        }
+    public Response alterar(@PathParam("id") int id, UsuarioRequestDto usuarioDto) {
+        usuarioDto.setId_usu(Integer.parseInt(String.valueOf(id)));
 
-        produto.setId_usu(id);
-        service.atualizar(produto);
+        service.atualizar(usuarioDto);
 
-        return Response.ok("{\"message\": \"Usuario atualizado com sucesso\"}").build();
+        return Response.ok("{\"message\": \"Usuário atualizado com sucesso\"}")
+                .build();
     }
 
 }

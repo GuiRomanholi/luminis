@@ -11,8 +11,8 @@ public class UsuarioService {
 
     private UsuarioDao usuarioDao = new UsuarioDao();
 
-    public void cadastrar(UsuarioRequestDto usuarioDto){
-        Usuario usuario = usuarioDto.convert(usuarioDto);
+    public void cadastrar(UsuarioRequestDto usuarioDto) {
+        Usuario usuario = usuarioDto.convertToEntity();
         usuarioDao.cadastrarUsuario(usuario);
     }
 
@@ -29,11 +29,11 @@ public class UsuarioService {
                 }).collect(Collectors.toList());
     }
 
-    public void deletar(String id){
+    public void deletar(int id){
         usuarioDao.deletar(id);
     }
 
-    public UsuarioRequestDto buscarPorId(String id) {
+    public UsuarioRequestDto buscarPorId(int id) {
         Usuario usuario = usuarioDao.buscarPorId(id);
         UsuarioRequestDto usuarioRequestDto = new UsuarioRequestDto();
         usuarioRequestDto.setId_usu(usuario.getId_usu());
@@ -44,7 +44,7 @@ public class UsuarioService {
     }
 
     public void atualizar(UsuarioRequestDto produtoDto) {
-        Usuario produto = produtoDto.convert(produtoDto);
+        Usuario produto = produtoDto.convertToEntity();
         usuarioDao.alterar(produto);
     }
 }

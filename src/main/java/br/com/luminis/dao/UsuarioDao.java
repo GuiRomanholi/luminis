@@ -13,21 +13,28 @@ public class UsuarioDao {
 
     private Connection conexao;
 
-    public void cadastrarUsuario(Usuario usuario){
+    public void cadastrarUsuario(Usuario usuario) {
         conexao = ConnectionFactory.obterConexao();
-        PreparedStatement comandoSql = null;
-        try {
-            String sql = "insert into usuario( id_usu, nome, senha, email) values (?,?,?,?)";
-            comandoSql = conexao.prepareStatement(sql);
-            comandoSql.setString(1, usuario.getId_usu());
-            comandoSql.setString(2, usuario.getNome());
-            comandoSql.setString(3, usuario.getSenha());
-            comandoSql.setString(4, usuario.getEmail());
+
+        String sql = "INSERT INTO usuario (nome, senha, email) VALUES (?, ?, ?)";
+
+        try (PreparedStatement comandoSql = conexao.prepareStatement(sql)) {
+            comandoSql.setString(1, usuario.getNome());
+            comandoSql.setString(2, usuario.getSenha());
+            comandoSql.setString(3, usuario.getEmail());
+
             comandoSql.executeUpdate();
-            comandoSql.close();
-            conexao.close();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Erro ao cadastrar usuário: " + e.getMessage(), e);
+        } finally {
+            try {
+                if (conexao != null && !conexao.isClosed()) {
+                    conexao.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -40,7 +47,7 @@ public class UsuarioDao {
             ResultSet rs = comandoSql.executeQuery();
             while(rs.next()){
                 Usuario usuario = new Usuario();
-                usuario.setId_usu(rs.getString(1));
+                usuario.setId_usu(rs.getInt(1));
                 usuario.setNome(rs.getString(2));
                 usuario.setSenha(rs.getString(3));
                 usuario.setEmail(rs.getString(4));
@@ -53,80 +60,59 @@ public class UsuarioDao {
         return usuarios;
     }
 
-    public Usuario buscarPorId(String id){
-        Usuario usuario = new Usuario();
-        PreparedStatement comandoSql = null;
-        conexao = ConnectionFactory.obterConexao();
-        try {
-            comandoSql = conexao.prepareStatement("SELECT * FROM usuario WHERE id_usu = ?");
-            comandoSql.setString(1, id);
-            ResultSet rs = comandoSql.executeQuery();
-            if (rs.next()) {
-                usuario.setId_usu(rs.getString(1));
-                usuario.setNome(rs.getString(2));
-                usuario.setSenha(rs.getString(3));
-                usuario.setEmail(rs.getString(4));
+    public Usuario buscarPorId(int id) {
+        Usuario usuario = null;
+        String sql = "SELECT id_usu, nome, senha, email FROM usuario WHERE id_usu = ?";
+
+        try (Connection conexao = ConnectionFactory.obterConexao();
+             PreparedStatement comandoSql = conexao.prepareStatement(sql)) {
+
+            comandoSql.setInt(1, id);
+            ResultSet resultado = comandoSql.executeQuery();
+
+            if (resultado.next()) {
+                usuario = new Usuario();
+                usuario.setId_usu(resultado.getInt("id_usu"));
+                usuario.setNome(resultado.getString("nome"));
+                usuario.setSenha(resultado.getString("senha"));
+                usuario.setEmail(resultado.getString("email"));
             }
-            conexao.close();
-            comandoSql.close();
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return usuario;
     }
 
-    public void deletar( String id){
-        Connection conexao = null;
-        PreparedStatement comandoSql = null;
-        try {
-            conexao = ConnectionFactory.obterConexao();
-            conexao.setAutoCommit(false);
+    public void deletar(int id) {
+        String sql = "DELETE FROM usuario WHERE id_usu = ?";
 
-            String sqlDeleteUsuario = "DELETE FROM usuario WHERE id_usu = ?";
-            comandoSql = conexao.prepareStatement(sqlDeleteUsuario);
-            comandoSql.setString(1, id);
+        try (Connection conexao = ConnectionFactory.obterConexao();
+             PreparedStatement comandoSql = conexao.prepareStatement(sql)) {
+
+            comandoSql.setInt(1, id);
             comandoSql.executeUpdate();
 
-            conexao.commit();
         } catch (SQLException e) {
-            if (conexao != null) {
-                try {
-                    conexao.rollback();
-                } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
-                }
-            }
-            throw new RuntimeException("Erro ao deletar usuario: " + e.getMessage(), e);
-        } finally {
-            try {
-                if (comandoSql != null) {
-                    comandoSql.close();
-                }
-                if (conexao != null) {
-                    conexao.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
     }
 
-    public void alterar(Usuario usuario){
-        conexao = ConnectionFactory.obterConexao();
-        PreparedStatement comandoSql;
-        try {
-            String sql = "UPDATE usuario SET nome = ?, senha = ?, email = ? WHERE id_usu = ?";
-            comandoSql = conexao.prepareStatement(sql);
+    public void alterar(Usuario usuario) {
+        String sql = "UPDATE usuario SET nome = ?, senha = ?, email = ? WHERE id_usu = ?";
+
+        try (Connection conexao = ConnectionFactory.obterConexao();
+             PreparedStatement comandoSql = conexao.prepareStatement(sql)) {
+
             comandoSql.setString(1, usuario.getNome());
             comandoSql.setString(2, usuario.getSenha());
             comandoSql.setString(3, usuario.getEmail());
-            comandoSql.setString(4, usuario.getId_usu());
+            comandoSql.setInt(4, usuario.getId_usu());
 
             comandoSql.executeUpdate();
-            comandoSql.close();
-            conexao.close();
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 

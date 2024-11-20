@@ -1,27 +1,17 @@
 package br.com.luminis.models;
 
 public class Usuario {
-    private String id_usu;
+    private int id_usu;
     private String nome;
     private String senha;
     private String email;
 
 
-    @Override
-    public String toString() {
-        return "Usuario{" +
-                "id_usu='" + id_usu + '\'' +
-                ", nome='" + nome + '\'' +
-                ", senha='" + senha + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
-
-    public String getId_usu() {
+    public int getId_usu() {
         return id_usu;
     }
 
-    public void setId_usu(String id_usu) {
+    public void setId_usu(int id_usu) {
         this.id_usu = id_usu;
     }
 
